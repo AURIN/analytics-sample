@@ -6,9 +6,12 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPDouble;
 import org.rosuda.REngine.REXPInteger;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REXPString;
+import org.rosuda.REngine.RList;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 
@@ -46,29 +49,42 @@ public class SampleComponentTest {
   public void test() throws RserveException, IOException, REXPMismatchException {
     
     System.out.println("========= Test case SampleComponent");
-    String path  = this.getClass().getClassLoader().getResource("data/AusByCFER.shp").getPath();
     
-    //String rWorkingDir = this.getClass().getClassLoader().getResource("outputs").getPath();
-    System.out.println(path);
-      
-    RConnection cOut = new RConnection();
-    cOut.assign("script", Rscript.load("/rscripts/geoJSON2DataFrame.r"));
-    //cOut.assign("script", LoadRScriptEmpcluster.getGeoJSON2DataFrameScript());
-    cOut.assign("shpFilePath", new REXPString(path));
-    //cOut.assign("geoJSONFilePath", new REXPString(path + ".geojson"));
-    //cOut.assign("geojSONString", new REXPString(this.geojSONString));
-    cOut.assign("spatialDataFormatMode", new REXPInteger(0));
+    // Load data into RConnection and prepare data
+    RConnection cOut = new RConnection();    
+    cOut.assign("myDataFrame", dataGenerator());
+    cOut.assign("attributeName", "Col0");
 
-    //cOut.assign("rWorkingDir", new REXPString(rWorkingDir));
-      
-    cOut.eval("try(eval(parse(text=script)),silent=FALSE)");
-       
     SampleComponent wc = new SampleComponent();
-
+    wc.dataFrameName = "myDataFrame";
+    wc.attributeName = "Col0";
     wc.cIn = cOut;
+    wc.execute();
     
+    System.out.println("textRestult=" + wc.textResult);
 
 
+  }
+  
+  public REXP dataGenerator() throws REXPMismatchException {
+    
+    REXP dataframe = null;
+  
+    double[] i0 = {1.1, 2.2, 3.3, 11.1, 22.2, 33.3}; 
+    double[] i1 = {10.0, 20.0, 30.0, 40.0, 50.0, 60.0};  
+    double[] i2 = {100.0, 200.0, 300.0, 400.0, 500.0, 600.0}; 
+    double[] i3 = {100.1, 200.2, 300.3, 110.1, 220.2, 3300.3};
+  
+    RList a = new RList();
+    // add each column separately
+    a.put("Col0", new REXPDouble(i0));
+    a.put("Col1", new REXPDouble(i1));
+    a.put("Col2", new REXPDouble(i2));
+    a.put("Col3", new REXPDouble(i3));
+    
+    dataframe = REXP.createDataFrame(a);
+    
+    return dataframe;
   }
   
   
