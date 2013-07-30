@@ -1,5 +1,7 @@
 package au.org.aurin.sample.tests;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
 import org.junit.AfterClass;
@@ -8,15 +10,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPDouble;
-import org.rosuda.REngine.REXPInteger;
 import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.REXPString;
 import org.rosuda.REngine.RList;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 
-
-import au.edu.uq.aurin.util.Rscript;
 import au.edu.uq.aurin.util.Rserve;
 import au.org.aurin.sample.SampleComponent;
 
@@ -61,9 +59,9 @@ public class SampleComponentTest {
     wc.cIn = cOut;
     wc.execute();
     
-    System.out.println("textRestult=" + wc.textResult);
+    System.out.println("textResult=" + wc.textResult);
 
-
+    assertEquals("mean(Col0) = 12.2", wc.textResult);
   }
   
   public REXP dataGenerator() throws REXPMismatchException {
@@ -86,7 +84,5 @@ public class SampleComponentTest {
     
     return dataframe;
   }
-  
-  
 
 }

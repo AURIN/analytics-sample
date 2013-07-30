@@ -24,12 +24,12 @@ libraryVersionError <- function() {
 }
 
 ## Check input data, formula string and family options validity
-inputError <- function(dataF, attributeName) {
+inputError <- function(dataFrameName, attributeName) {
   
   errorInput <- FALSE
   
   ## check input dataframe
-  if(!(is.data.frame(dataF) && length(dataF) >= 1)) {
+  if(!(is.character(dataFrameName) && length(dataFrameName) >= 1)) {
     errorInput <- TRUE
   }
   
@@ -44,28 +44,7 @@ computeMean <- function() {
   
   oData <- "NULL"
   
-  # retrieve the dataF from the user supplied name,-dataFrameName- and pass to -dataF-
-  print("dataFrameName=")
-  print(dataFrameName)
-  print("attributeName=")
-  print(attributeName)
   
-  dataF <- get(dataFrameName)
-
-  print("dataF=")
-  print(dataF)
-
-  attr3 <- dataF[attributeName]
-  print("attr3=")
-  print(attr3)
-  print("/attr3")
-  
-  print("mean3=")
-  print(colMeans(attr3))
-  print("/mean3=")
-  
-  oData <- colMeans(attr3)
-  print(oData)
   
   
   if(libraryError()) {
@@ -75,7 +54,14 @@ computeMean <- function() {
   }
   
   if(!inputError(dataFrameName, attributeName)) {
-    # do compute
+    # do compute 
+    
+    # retrieve the dataF from the user supplied name,-dataFrameName- and pass to -dataF-. 
+    dataF <- get(dataFrameName)
+    # retrieve the attribute from the dataframe.
+    attr3 <- dataF[attributeName]
+    oData <- colMeans(attr3)
+    #print(oData)
   }
   
   return(oData)
